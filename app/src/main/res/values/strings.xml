@@ -3,6 +3,7 @@
     <!-- App title -->
     <string name="app_name">PINSafe resolver</string>
     <string name="otc_title">Last One Time Code (OTC)</string>
+    <string name="pinsafe_setting_remember">TIP: Use settings to set your PINSafe</string>
 
     <!-- PinSafe dialog -->
     <string name="pinsafe_update_title">Update your PINSafe</string>
