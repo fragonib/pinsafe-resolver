@@ -1,107 +1,97 @@
 package es.fragonib.vpn.pinsafe.resolver;
 
-import android.Manifest;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
+import android.app.DialogFragment;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import com.google.common.base.Optional;
+
+import es.fragonib.vpn.pinsafe.resolver.domain.OtcResolver;
+import es.fragonib.vpn.pinsafe.resolver.domain.Message;
+import es.fragonib.vpn.pinsafe.resolver.infrastructure.PermissionHelper;
+import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
+import es.fragonib.vpn.pinsafe.resolver.infrastructure.SmsHelper;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = SmsHelper.class.getSimpleName();
+
+    private final PermissionHelper permissionHelper;
+    private final SmsHelper smsHelper;
+    private final OtcResolver otcResolver;
+
+    public MainActivity() {
+        super();
+        permissionHelper = new PermissionHelper();
+        smsHelper = new SmsHelper();
+        otcResolver = new OtcResolver();
+    }
 
     // --------------------------------------- Activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        if (!hasReadSmsPermission())
-            showRequestPermissionsInfoAlertDialog();
 
+        // Init view
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.pinSafeDialogButton).setOnClickListener(v -> {
+                    if (checkAndRequestForSmsPermissions())
+                        showChangePinSafeDialog();
+                });
+
+        // Init preferences store
+        initPreferencesStore();
+
+        // Check for permissions
+        checkAndRequestForSmsPermissions();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "Resumed activity");
+        Optional<Message> olderPinSafeMessage = smsHelper.findOlderSms(this,
+                Message.SENDER, Message::isPinSafeMessage);
+        if (olderPinSafeMessage.isPresent()) {
+            Log.d(LOG_TAG, "PINSafe SMS detected");
+            String pinSafe = PreferenceHelper.retrieve(PreferenceHelper.PREF_SAVED_PIN);
+            if (!TextUtils.isEmpty(pinSafe)) {
+                String otc = otcResolver.resolveOtc(olderPinSafeMessage.get(), pinSafe);
+                Log.d(LOG_TAG, "Decoded otc: " + otc);
+                renderNewOtc(otc);
+            }
+        }
+    }
+
+
+    // --------------------------------------- Private
+
+    private void initPreferencesStore() {
         PreferenceHelper.init(this);
     }
 
-
-    // ---------------------------------------- Actions
-
-    public void updatePinAction(View v) {
-        EditText pinEditText = findViewById(R.id.pin_number);
-        String newPin = String.valueOf(pinEditText.getText());
-        if (!hasValidPreConditions(newPin)) return;
-        PreferenceHelper.save(PreferenceHelper.PREF_SAVED_PIN, newPin);
-        pinEditText.setText("");
-        Toast.makeText(getApplicationContext(), R.string.pin_updated_message, Toast.LENGTH_SHORT).show();
-    }
-
-    /**
-     * Validates if the app has readSmsPermissions and the pin safe is valid
-     *
-     * @param newPin
-     *
-     * @return boolean validation value
-     */
-    private boolean hasValidPreConditions(String newPin) {
-        if (!hasReadSmsPermission()) {
-            requestReadSmsPermission();
-            return false;
-        }
-
-        if (TextUtils.isEmpty(newPin) || newPin.length() != 4) {
-            Toast.makeText(getApplicationContext(), R.string.error_invalid_pin, Toast.LENGTH_SHORT).show();
+    private boolean checkAndRequestForSmsPermissions() {
+        if (!permissionHelper.hasReadSmsPermission(this)) {
+            permissionHelper.showRequestPermissionsInfoAlertDialog(this);
             return false;
         }
         return true;
     }
 
-
-    // --------------------------------------- Permissions
-
-    /**
-     * Runtime SMS permissions
-     */
-    private boolean hasReadSmsPermission() {
-        int readSMSPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_SMS);
-        int receiveSMSPermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.RECEIVE_SMS);
-        return readSMSPermission == PackageManager.PERMISSION_GRANTED &&
-                receiveSMSPermission == PackageManager.PERMISSION_GRANTED;
+    void showChangePinSafeDialog() {
+        DialogFragment changePinDialog = new ChangePinDialog();
+        changePinDialog.show(getFragmentManager(), "dialog");
     }
 
-    /**
-     * Optional informative alert dialog to explain the user why the app needs the Read/Send SMS permission
-     */
-    private void showRequestPermissionsInfoAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.permission_alert_dialog_title);
-        builder.setMessage(R.string.permission_dialog_message);
-        builder.setPositiveButton(R.string.action_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                requestReadSmsPermission();
-            }
-        });
-        builder.show();
-    }
-
-    private void requestReadSmsPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.READ_SMS)) {
-            Log.d(MainActivity.class.getSimpleName(),
-                    "shouldShowRequestPermissionRationale(), no permission requested");
-            return;
-        }
-        int SMS_PERMISSION_CODE = 0;
-        ActivityCompat.requestPermissions(
-                MainActivity.this,
-                new String[] { Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS },
-                SMS_PERMISSION_CODE);
+    private void renderNewOtc(String newOtc) {
+        TextView otcText = findViewById(R.id.otcText);
+        otcText.setText(newOtc);
     }
 
 }

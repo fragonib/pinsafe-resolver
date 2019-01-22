@@ -2,18 +2,20 @@
 
     <string name="app_name">PINSafe resolver</string>
 
-    <string name="update_your_pin">Update your PINSafe</string>
     <string name="pin_hint">1234</string>
-    <string name="update_pin">Update pin</string>
 
     <string name="action_ok">OK</string>
 
+    <string name="update_pin">Update pin</string>
+    <string name="update_your_pin">Update your PINSafe</string>
     <string name="pin_updated_message">PINSafe updated</string>
     <string name="error_invalid_pin">Error invalid PINSafe</string>
 
     <string name="permission_alert_dialog_title">Requesting SMS permission</string>
     <string name="permission_dialog_message">The app will now request your permission to read SMS related services.</string>
 
-    <string name="notification_title">One Time Code</string>
+    <string name="notification_title">Last One Time Code</string>
+    <string name="update">Update</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

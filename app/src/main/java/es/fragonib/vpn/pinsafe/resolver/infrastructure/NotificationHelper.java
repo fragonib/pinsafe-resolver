@@ -1,4 +1,4 @@
-package es.fragonib.vpn.pinsafe.resolver;
+package es.fragonib.vpn.pinsafe.resolver.infrastructure;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -7,6 +7,8 @@ import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+
+import es.fragonib.vpn.pinsafe.resolver.R;
 
 import static android.app.NotificationManager.IMPORTANCE_HIGH;
 

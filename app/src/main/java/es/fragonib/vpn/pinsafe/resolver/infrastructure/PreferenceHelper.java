@@ -1,4 +1,4 @@
-package es.fragonib.vpn.pinsafe.resolver;
+package es.fragonib.vpn.pinsafe.resolver.infrastructure;
 
 
 import android.content.Context;
@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
  */
 public class PreferenceHelper {
 
-    public static String PREF_SAVED_PIN = "pin";
+    public static String PREF_SAVED_PIN = "pinSafe";
 
     private static SharedPreferences preferences;
 
