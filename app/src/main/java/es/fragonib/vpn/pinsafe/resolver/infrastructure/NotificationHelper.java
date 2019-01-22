@@ -41,7 +41,7 @@ public class NotificationHelper {
     private void notifyHeadsUp(Context context, String msg) {
         NotificationCompat.Builder b = new NotificationCompat.Builder(context, OTC_CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_VIBRATE)
-                .setContentTitle(context.getString(R.string.notification_title))
+                .setContentTitle(context.getString(R.string.otc_title))
                 .setSmallIcon(android.R.drawable.stat_sys_download_done)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentText(msg);

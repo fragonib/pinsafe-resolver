@@ -14,7 +14,7 @@
             android:layout_width="53dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/pin_hint"
+            android:hint="@string/pinsafe_update_hint"
             android:inputType="numberPassword"
             android:maxLength="4" />
     </LinearLayout>

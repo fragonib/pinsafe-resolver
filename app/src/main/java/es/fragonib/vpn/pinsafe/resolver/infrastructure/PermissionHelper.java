@@ -32,7 +32,7 @@ public class PermissionHelper {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(R.string.permission_alert_dialog_title);
         builder.setMessage(R.string.permission_dialog_message);
-        builder.setPositiveButton(R.string.action_ok, (dialog, which) -> {
+        builder.setPositiveButton(R.string.permission_dialog_ok_button, (dialog, which) -> {
             dialog.dismiss();
             requestReadSmsPermission(activity);
         });

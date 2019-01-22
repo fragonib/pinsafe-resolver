@@ -23,9 +23,9 @@ public class ChangePinDialog extends DialogFragment {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.update_your_pin)
-                .setPositiveButton(R.string.update, (dialog, id) -> updatePinAction())
-                .setNegativeButton(R.string.cancel, (dialog, id) -> dialog.cancel());
+        builder.setMessage(R.string.pinsafe_update_title)
+                .setPositiveButton(R.string.pinsafe_update_button, (dialog, id) -> updatePinAction())
+                .setNegativeButton(R.string.pinsafe_cancel_button, (dialog, id) -> dialog.cancel());
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
         dialogView = inflater.inflate(R.layout.pinsafe_dialog, null);
@@ -48,11 +48,11 @@ public class ChangePinDialog extends DialogFragment {
     }
 
     private void infoUpdated(Context context) {
-        Toast.makeText(context, R.string.pin_updated_message, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.pinsafe_updated_message, Toast.LENGTH_SHORT).show();
     }
 
     private void infoInvalidPin(Context context) {
-        Toast.makeText(context, R.string.error_invalid_pin, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, R.string.pinsafe_invalid_message, Toast.LENGTH_SHORT).show();
     }
 
     /**

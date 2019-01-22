@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notification_title"
+            android:text="@string/otc_title"
             android:textAlignment="center"
             android:textSize="18sp" />
 
@@ -26,11 +26,8 @@
             android:id="@+id/otcText"
             android:layout_width="67dp"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:editable="false"
             android:ems="10"
             android:focusable="true"
-            android:hint="1234"
             android:inputType="number"
             android:singleLine="true"
             android:textAlignment="center" />
