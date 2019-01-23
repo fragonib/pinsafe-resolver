@@ -47,7 +47,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginBottom="@android:dimen/app_icon_size"
         android:clickable="true"
         android:focusable="true"
         app:backgroundTint="@android:color/holo_orange_light"
