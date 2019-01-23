@@ -1,17 +1,17 @@
 <resources>
 
     <!-- App title -->
-    <string name="app_name">PINSafe resolver</string>
+    <string name="app_name">PINsafe resolver</string>
     <string name="otc_title">Last One Time Code (OTC)</string>
-    <string name="pinsafe_setting_remember">TIP: Use settings to set your PINSafe</string>
+    <string name="pinsafe_setting_remember">TIP: Start by using settings to set your PINsafe</string>
 
-    <!-- PinSafe dialog -->
-    <string name="pinsafe_update_title">Update your PINSafe</string>
+    <!-- PINsafe dialog -->
+    <string name="pinsafe_update_title">Update your PINsafe</string>
     <string name="pinsafe_update_hint">1234</string>
     <string name="pinsafe_update_button">Update</string>
     <string name="pinsafe_cancel_button">Cancel</string>
-    <string name="pinsafe_updated_message">PINSafe updated</string>
-    <string name="pinsafe_invalid_message">Error invalid PINSafe</string>
+    <string name="pinsafe_updated_message">PINsafe updated</string>
+    <string name="pinsafe_invalid_message">Error invalid PINsafe</string>
 
     <!-- Permission dialog -->
     <string name="permission_alert_dialog_title">Requesting SMS permission</string>

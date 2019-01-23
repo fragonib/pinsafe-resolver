@@ -55,16 +55,6 @@ public class ChangePinDialog extends DialogFragment {
         Toast.makeText(context, R.string.pinsafe_invalid_message, Toast.LENGTH_SHORT).show();
     }
 
-    /**
-     * Validates:
-     *
-     * <li>Has read SMS permissions</li>
-     * <li>Pin safe is valid</li>
-     *
-     * @param newPin
-     *
-     * @return boolean validation value
-     */
     private boolean isPinValid(String newPin) {
         return !TextUtils.isEmpty(newPin) && newPin.length() == 4;
     }

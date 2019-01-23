@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
  */
 public class PreferenceHelper {
 
-    public static String PREF_SAVED_PIN = "pinSafe";
+    public static String PREF_SAVED_PIN = "PINsafe";
 
     private static SharedPreferences preferences;
 

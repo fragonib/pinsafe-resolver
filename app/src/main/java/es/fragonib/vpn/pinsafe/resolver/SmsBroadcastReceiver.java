@@ -20,7 +20,7 @@ import es.fragonib.vpn.pinsafe.resolver.infrastructure.SmsHelper;
 
 
 /**
- * A broadcast receiver who listens for incoming SMS and decodes PINSafe
+ * A broadcast receiver who listens for incoming SMS and decodes PINsafe
  */
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
@@ -45,7 +45,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             Log.d(LOG_TAG, "SMS received from\n" + message);
 
             if (message.isPinSafeMessage()) {
-                Log.d(LOG_TAG, "PINSafe SMS detected");
+                Log.d(LOG_TAG, "PINsafe SMS detected");
                 String pinSafe = PreferenceHelper.retrieve(PreferenceHelper.PREF_SAVED_PIN);
                 if (!TextUtils.isEmpty(pinSafe)) {
                     String otc = otcResolver.resolveOtc(message, pinSafe);
