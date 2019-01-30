@@ -5,7 +5,7 @@
 ![minSdkVersion](https://img.shields.io/badge/minSdkVersion-19-yellow.svg?style=true)
 ![compileSdkVersion](https://img.shields.io/badge/compileSdkVersion-25-green.svg?style=true)
 
-Android App to resolve two factor authentication via PINsafe protected OTC from SMS.
+Android App to resolve two factor authentication via PINsafe protected OTC using SMS.
 
 ### License
 
