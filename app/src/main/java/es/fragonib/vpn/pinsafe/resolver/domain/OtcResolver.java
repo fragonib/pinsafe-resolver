@@ -11,14 +11,14 @@ public class OtcResolver {
     private static final Pattern PIN_SAFE_CODE_TABLE_ENTRY_PATTERN =
             Pattern.compile("(?<number>\\d)______(?<decoding>\\w)");
 
-    public String resolveOtc(Message message, String pinSafe) {
-        Map<String, String> codingTable = buildCodingTable(message.getBody());
+    public String resolveOtc(String pinSafeCodingTable, String pinSafe) {
+        Map<String, String> codingTable = buildCodingTable(pinSafeCodingTable);
         return resolvePin(codingTable, pinSafe);
     }
 
-    private Map<String, String> buildCodingTable(String tableText) {
+    private Map<String, String> buildCodingTable(String codingTableText) {
         Map<String, String> codeTable = new HashMap<>();
-        Matcher m = PIN_SAFE_CODE_TABLE_ENTRY_PATTERN.matcher(tableText);
+        Matcher m = PIN_SAFE_CODE_TABLE_ENTRY_PATTERN.matcher(codingTableText);
         while (m.find()) {
             String coding = m.group(1);
             String decoding = m.group(2);

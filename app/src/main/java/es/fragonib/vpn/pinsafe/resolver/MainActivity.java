@@ -9,8 +9,8 @@ import android.widget.TextView;
 
 import com.google.common.base.Optional;
 
-import es.fragonib.vpn.pinsafe.resolver.domain.OtcResolver;
 import es.fragonib.vpn.pinsafe.resolver.domain.Message;
+import es.fragonib.vpn.pinsafe.resolver.domain.OtcResolver;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.PermissionHelper;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.SmsHelper;
@@ -56,13 +56,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "Resumed activity");
-        Optional<Message> olderPinSafeMessage = smsHelper.findOlderSms(this,
+        Optional<Message> oldestPinSafeMessage = smsHelper.findOlderSms(this,
                 Message.SENDER, Message::isPinSafeMessage);
-        if (olderPinSafeMessage.isPresent()) {
+        if (oldestPinSafeMessage.isPresent()) {
             Log.d(LOG_TAG, "PINsafe SMS detected");
             String pinSafe = PreferenceHelper.retrieve(PreferenceHelper.PREF_SAVED_PIN);
             if (!TextUtils.isEmpty(pinSafe)) {
-                String otc = otcResolver.resolveOtc(olderPinSafeMessage.get(), pinSafe);
+                String codingTableText = oldestPinSafeMessage.get().getBody();
+                String otc = otcResolver.resolveOtc(codingTableText, pinSafe);
                 Log.d(LOG_TAG, "Decoded otc: " + otc);
                 renderNewOtc(otc);
             }

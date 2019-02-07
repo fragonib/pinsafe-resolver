@@ -12,8 +12,8 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import es.fragonib.vpn.pinsafe.resolver.domain.OtcResolver;
 import es.fragonib.vpn.pinsafe.resolver.domain.Message;
+import es.fragonib.vpn.pinsafe.resolver.domain.OtcResolver;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.NotificationHelper;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.SmsHelper;
@@ -48,7 +48,8 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                 Log.d(LOG_TAG, "PINsafe SMS detected");
                 String pinSafe = PreferenceHelper.retrieve(PreferenceHelper.PREF_SAVED_PIN);
                 if (!TextUtils.isEmpty(pinSafe)) {
-                    String otc = otcResolver.resolveOtc(message, pinSafe);
+                    String codingTableText = message.getBody();
+                    String otc = otcResolver.resolveOtc(codingTableText, pinSafe);
                     Log.d(LOG_TAG, "Decoded otc: " + otc);
                     sendOtcNotification(context, otc);
                     delayedDeleteSMS(context, message);
@@ -73,10 +74,11 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
     }
 
 
-    public Message from(Intent intent) {
+
+    public Message from(Intent smsIntent) {
         String smsSender = "";
         String smsBody = "";
-        SmsMessage[] messagesFromIntent = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+        SmsMessage[] messagesFromIntent = Telephony.Sms.Intents.getMessagesFromIntent(smsIntent);
         for (SmsMessage smsMessage : messagesFromIntent) {
             smsBody = smsMessage.getMessageBody();
             smsSender = smsMessage.getOriginatingAddress();
