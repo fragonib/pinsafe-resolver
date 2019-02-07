@@ -50,7 +50,7 @@
         android:layout_marginBottom="@android:dimen/app_icon_size"
         android:clickable="true"
         android:focusable="true"
-        app:backgroundTint="@android:color/holo_orange_light"
+        app:backgroundTint="@color/colorPrimary"
         app:srcCompat="@android:drawable/ic_menu_manage"
         tools:srcCompat="@android:drawable/ic_menu_preferences" />
 
