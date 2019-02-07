@@ -1,5 +1,6 @@
 package es.fragonib.vpn.pinsafe.resolver;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -16,7 +17,22 @@ import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
 
 public class ChangePinDialog extends DialogFragment {
 
+    private OnDialogCloseListener listener;
     private View dialogView;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Verify that the host activity implements the callback interface
+        try {
+            // Instantiate the NoticeDialogListener so we can send events to the host
+            listener = (OnDialogCloseListener) activity;
+        } catch (ClassCastException e) {
+            // The activity doesn't implement the interface, throw exception
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnDialogCloseListener");
+        }
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -45,6 +61,8 @@ public class ChangePinDialog extends DialogFragment {
         saveNewPin(newPin);
         clearPinEditor();
         infoUpdated(parentActivity);
+        if (listener != null)
+            listener.onDialogClose();
     }
 
     private void infoUpdated(Context context) {

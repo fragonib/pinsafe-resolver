@@ -16,7 +16,7 @@ import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.SmsHelper;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnDialogCloseListener {
 
     private static final String LOG_TAG = SmsHelper.class.getSimpleName();
 
@@ -56,6 +56,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "Resumed activity");
+        resolveOldestPinSafeMessage();
+    }
+
+    @Override
+    public void onDialogClose() {
+        Log.d(LOG_TAG, "On dialog close");
+        resolveOldestPinSafeMessage();
+    }
+
+
+    // --------------------------------------- Private
+
+    private void resolveOldestPinSafeMessage() {
         Optional<Message> oldestPinSafeMessage = smsHelper.findOlderSms(this,
                 Message.SENDER, Message::isPinSafeMessage);
         if (oldestPinSafeMessage.isPresent()) {
@@ -69,9 +82,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
-    // --------------------------------------- Private
 
     private void initPreferencesStore() {
         PreferenceHelper.init(this);
