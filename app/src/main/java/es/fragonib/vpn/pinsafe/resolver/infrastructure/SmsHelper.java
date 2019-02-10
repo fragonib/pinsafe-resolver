@@ -9,15 +9,15 @@ import android.util.Log;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 
-import es.fragonib.vpn.pinsafe.resolver.domain.Message;
+import es.fragonib.vpn.pinsafe.resolver.domain.PinSafeMessage;
 
 
 public class SmsHelper {
 
     private static final String LOG_TAG = SmsHelper.class.getSimpleName();
 
-    public Optional<Message> findOlderSms(
-            Context context, String sender, Predicate<Message> messagePredicate) {
+    public Optional<PinSafeMessage> findOlderSms(
+            Context context, String sender, Predicate<PinSafeMessage> messagePredicate) {
 
         Log.i(LOG_TAG, String.format("Last SMS with address [%s] from inbox", sender));
 
@@ -27,7 +27,7 @@ public class SmsHelper {
         String[] selectionArgs = { String.valueOf(Sms.MESSAGE_TYPE_INBOX), sender };
         String sortOrder = Sms.DATE + " DESC";
 
-        Optional<Message> lastSms = Optional.absent();
+        Optional<PinSafeMessage> lastSms = Optional.absent();
 
         try (Cursor c = context.getContentResolver().query(
                 contentUri,
@@ -38,7 +38,7 @@ public class SmsHelper {
             if (c != null && c.moveToFirst()) {
                 do {
                     String body = c.getString(1);
-                    Message message = Message.of(sender, body);
+                    PinSafeMessage message = PinSafeMessage.of(sender, body);
                     boolean isTargetSMS = messagePredicate.apply(message);
                     if (isTargetSMS) {
                         lastSms = Optional.of(message);
@@ -57,7 +57,7 @@ public class SmsHelper {
 
     }
 
-    public void deleteSMS(Context context, Message message) {
+    public void deleteSMS(Context context, PinSafeMessage message) {
         try {
             Log.i(LOG_TAG, "Deleting SMS from inbox");
             Uri uriSms = Uri.parse("content://sms/inbox");

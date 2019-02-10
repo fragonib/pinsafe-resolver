@@ -1,6 +1,10 @@
 package es.fragonib.vpn.pinsafe.resolver;
 
-interface OnDialogCloseListener {
+
+/**
+ * Listener interested on dialog finish
+ */
+public interface OnDialogCloseListener {
 
     void onDialogClose();
 

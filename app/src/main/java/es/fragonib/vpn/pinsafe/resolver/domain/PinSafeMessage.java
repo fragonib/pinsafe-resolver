@@ -5,14 +5,30 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Value;
 
-public class OtcResolver {
 
+@Value
+@AllArgsConstructor(staticName = "of")
+public class PinSafeMessage {
+
+    private static final String BODY_HEADER = "PINsafe Security String";
     private static final Pattern PIN_SAFE_CODE_TABLE_ENTRY_PATTERN =
             Pattern.compile("(?<number>\\d)______(?<decoding>\\w)");
 
-    public String resolveOtc(String pinSafeCodingTable, String pinSafe) {
-        Map<String, String> codingTable = buildCodingTable(pinSafeCodingTable);
+    @NonNull private String sender;
+    @NonNull private String body;
+
+    public boolean isPinSafeMessage() {
+        String expectedSmsBodyHeader = BODY_HEADER.toLowerCase();
+        boolean matchBodyHeader = this.body.toLowerCase().startsWith(expectedSmsBodyHeader);
+        return matchBodyHeader;
+    }
+
+    public String resolveOtc(String pinSafe) {
+        Map<String, String> codingTable = buildCodingTable(body);
         return resolvePin(codingTable, pinSafe);
     }
 

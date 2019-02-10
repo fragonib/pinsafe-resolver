@@ -1,22 +1,56 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/pinSafeSenderLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/pinsafe_sms_sender_description"
+            android:text="@string/pinsafe_sms_sender_label" />
 
         <EditText
-            android:id="@+id/pinSafeEdit"
+            android:id="@+id/pinSafeSmsSenderEditText"
             android:layout_width="53dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="@string/pinsafe_update_hint"
-            android:inputType="numberPassword"
-            android:maxLength="4" />
-    </LinearLayout>
+            android:hint="@string/pinsafe_sms_sender_hint"
+            android:importantForAutofill="no"
+            android:inputType="textCapCharacters"
+            android:maxLength="15"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            tools:targetApi="o" />
 
-</LinearLayout>
+    </TableRow>
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/pinSafeCodeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/pinsafe_code_label_description"
+            android:text="@string/pinsafe_code_label" />
+
+        <EditText
+            android:id="@+id/pinSafePinCodeEditText"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/pinsafe_code_hint"
+            android:importantForAutofill="no"
+            android:inputType="numberPassword"
+            android:maxLength="4"
+            tools:targetApi="o" />
+    </TableRow>
+
+</TableLayout>
