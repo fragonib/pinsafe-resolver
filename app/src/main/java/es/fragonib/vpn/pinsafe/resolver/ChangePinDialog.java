@@ -1,12 +1,11 @@
 package es.fragonib.vpn.pinsafe.resolver;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,82 +16,73 @@ import es.fragonib.vpn.pinsafe.resolver.infrastructure.PreferenceHelper;
 
 public class ChangePinDialog extends DialogFragment {
 
-    private OnDialogCloseListener listener;
-    private View dialogView;
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Verify that the host activity implements the callback interface
-        try {
-            listener = (OnDialogCloseListener) activity;
-        }
-        catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnDialogCloseListener");
-        }
-    }
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage(R.string.pinsafe_update_title)
-                .setPositiveButton(R.string.pinsafe_update_button, (dialog, id) -> updatePinPreferences())
+                .setPositiveButton(R.string.pinsafe_update_button, (dialog, id) -> updatePinSafePreferences(dialog))
                 .setNegativeButton(R.string.pinsafe_cancel_button, (dialog, id) -> dialog.cancel());
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        dialogView = inflater.inflate(R.layout.pinsafe_dialog, null);
+        View dialogView = getActivity().getLayoutInflater().inflate(R.layout.pinsafe_dialog, null);
         builder.setView(dialogView);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setOnShowListener(this::resetPinSafeDialog);
 
-        // Create the AlertDialog object and return it
-        return builder.create();
-    }
-
-    private void updatePinPreferences() {
-        Context parentActivity = this.getActivity();
-        PinSafePreference pinSafePreference = retrieveUserPinSafePreference();
-        if (!pinSafePreference.isValid()) {
-            infoInvalidPinSafePreferences(parentActivity);
-            return;
-        }
-        savePinSafePreferences(pinSafePreference);
-        resetPinSafeDialog();
-        infoPinSafePreferencesUpdated(parentActivity);
-        if (listener != null)
-            listener.onDialogClose();
-    }
-
-    private PinSafePreference retrieveUserPinSafePreference() {
+        // Add valid listeners to text dialog
         EditText pinSafeSMSSenderEditText = dialogView.findViewById(R.id.pinSafeSmsSenderEditText);
-        String newPinSafeSender = String.valueOf(pinSafeSMSSenderEditText.getText());
+        pinSafeSMSSenderEditText.addTextChangedListener(
+                new DialogSubmitEnabler(alertDialog, this::enableSubmitIfValidPreferences));
+
         EditText pinSafePinCodeEditText = dialogView.findViewById(R.id.pinSafePinCodeEditText);
+        pinSafePinCodeEditText.addTextChangedListener(
+                new DialogSubmitEnabler(alertDialog, this::enableSubmitIfValidPreferences));
+
+        return alertDialog;
+    }
+
+    private void resetPinSafeDialog(DialogInterface dialog) {
+        AlertDialog alertDialog = (AlertDialog) dialog;
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        EditText pinSafeSMSSenderEditText = alertDialog.findViewById(R.id.pinSafeSmsSenderEditText);
+        PinSafePreference pinSafePreference = PreferenceHelper.retrieve();
+        String senderValue = (pinSafePreference == null) ? "" : pinSafePreference.getSender();
+        pinSafeSMSSenderEditText.setText(senderValue);
+
+        EditText pinSafePinCodeEditText = alertDialog.findViewById(R.id.pinSafePinCodeEditText);
+        pinSafePinCodeEditText.setText("");
+
+        if (pinSafePreference != null)
+            pinSafePinCodeEditText.requestFocus();
+    }
+
+    public boolean enableSubmitIfValidPreferences(AlertDialog alertDialog) {
+        PinSafePreference pinSafePreference = retrieveUserPinSafePreference(alertDialog);
+        return pinSafePreference.isValid();
+    }
+
+    private PinSafePreference retrieveUserPinSafePreference(AlertDialog alertDialog) {
+        EditText pinSafeSMSSenderEditText = alertDialog.findViewById(R.id.pinSafeSmsSenderEditText);
+        String newPinSafeSender = String.valueOf(pinSafeSMSSenderEditText.getText());
+        EditText pinSafePinCodeEditText = alertDialog.findViewById(R.id.pinSafePinCodeEditText);
         String newPinSafePinCode = String.valueOf(pinSafePinCodeEditText.getText());
         return PinSafePreference.of(newPinSafeSender, newPinSafePinCode);
     }
 
-    private void savePinSafePreferences(PinSafePreference preference) {
+    private void updatePinSafePreferences(DialogInterface dialog) {
+        AlertDialog alertDialog = (AlertDialog) dialog;
+        PinSafePreference pinSafePreference = retrieveUserPinSafePreference(alertDialog);
+        storePinSafePreferences(pinSafePreference);
+        alertPinSafePreferencesUpdated(this.getActivity());
+    }
+
+    private void storePinSafePreferences(PinSafePreference preference) {
         PreferenceHelper.save(preference);
     }
 
-    private void infoPinSafePreferencesUpdated(Context context) {
+    private void alertPinSafePreferencesUpdated(Context context) {
         Toast.makeText(context, R.string.pinsafe_updated_message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void infoInvalidPinSafePreferences(Context context) {
-        Toast.makeText(context, R.string.pinsafe_invalid_message, Toast.LENGTH_SHORT).show();
-    }
-
-    private void resetPinSafeDialog() {
-        EditText pinSafeSMSSenderEditText = dialogView.findViewById(R.id.pinSafeSmsSenderEditText);
-        String senderValue = (PreferenceHelper.retrieve() == null) ? "" :
-                PreferenceHelper.retrieve().getSender();
-        pinSafeSMSSenderEditText.setText(senderValue);
-
-        EditText pinSafePinCodeEditText = dialogView.findViewById(R.id.pinSafePinCodeEditText);
-        pinSafePinCodeEditText.setText("");
     }
 
 }

@@ -13,11 +13,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:contentDescription="@string/pinsafe_sms_sender_description"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:text="@string/pinsafe_sms_sender_label" />
 
         <EditText
             android:id="@+id/pinSafeSmsSenderEditText"
-            android:layout_width="53dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/pinsafe_sms_sender_hint"
@@ -26,6 +28,7 @@
             android:maxLength="15"
             android:selectAllOnFocus="true"
             android:singleLine="true"
+            android:textAlignment="viewStart"
             tools:targetApi="o" />
 
     </TableRow>
@@ -39,17 +42,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/pinsafe_code_label_description"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:text="@string/pinsafe_code_label" />
 
         <EditText
             android:id="@+id/pinSafePinCodeEditText"
-            android:layout_width="53dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/pinsafe_code_hint"
             android:importantForAutofill="no"
             android:inputType="numberPassword"
             android:maxLength="4"
+            android:textAlignment="viewStart"
             tools:targetApi="o" />
     </TableRow>
 

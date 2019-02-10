@@ -15,7 +15,7 @@ public class PinSafePreference {
     @NonNull private String code;
 
     public boolean isValid() {
-        return !TextUtils.isEmpty(sender) && sender.length() > 0 ||
+        return !TextUtils.isEmpty(sender) && sender.length() > 0 &&
                 !TextUtils.isEmpty(code) && code.length() == 4 ;
     }
 
