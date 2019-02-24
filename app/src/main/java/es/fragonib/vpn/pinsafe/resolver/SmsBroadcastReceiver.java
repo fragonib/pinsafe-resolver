@@ -8,9 +8,6 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import es.fragonib.vpn.pinsafe.resolver.domain.PinSafeMessage;
 import es.fragonib.vpn.pinsafe.resolver.domain.PinSafePreference;
 import es.fragonib.vpn.pinsafe.resolver.infrastructure.NotificationHelper;
@@ -51,7 +48,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     Log.d(LOG_TAG, "Decoded otc: " + otc);
                     onPinsafeReceivedListener.onPinsafeReceived(otc);
                     sendOtcNotification(context, otc);
-                    delayedSmsDeletion(context, message);
                 }
             }
 
@@ -73,14 +69,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
         String notificationText = otc;
         notificationHelper.notify(context, notificationText);
         Toast.makeText(context, notificationText, Toast.LENGTH_LONG).show();
-    }
-
-    private void delayedSmsDeletion(Context context, PinSafeMessage message) {
-        new Timer().schedule(new TimerTask() {
-                @Override public void run() {
-                    smsHelper.deleteSMS(context, message);
-                }
-            }, 1000L);
     }
 
 }
