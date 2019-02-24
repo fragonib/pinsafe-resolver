@@ -28,6 +28,18 @@ public class PreferenceHelper {
     }
 
     /**
+     * Should be invoked always after {@link PreferenceHelper#init(Context)}
+     *
+     * @param listener Listener interested on preferences change
+     */
+    public static void register(OnPreferenceChangeListener listener) {
+        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
+            if (key.startsWith(PREFERENCE_PINSAFE_PREFIX))
+                listener.onPreferenceChange(retrieve());
+        });
+    }
+
+    /**
      * Should be invoked after always after {@link PreferenceHelper#init(Context)}
      *
      * @param preference Preference to save (non <code>null</code>)
@@ -52,16 +64,4 @@ public class PreferenceHelper {
         return PinSafePreference.of(sender, code);
     }
 
-    /**
-     * Should be invoked after always after {@link PreferenceHelper#init(Context)}
-     *
-     * @param listener Listener interested on preferences change
-     */
-    public static void register(OnPreferenceChangeListener listener) {
-        preferences.registerOnSharedPreferenceChangeListener((sharedPreferences, key) -> {
-            if (key.startsWith(PREFERENCE_PINSAFE_PREFIX))
-                listener.onPreferenceChange();
-        });
-    }
- 
 }

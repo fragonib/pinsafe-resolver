@@ -1,7 +1,9 @@
 package es.fragonib.vpn.pinsafe.resolver;
 
 import android.app.DialogFragment;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -37,52 +39,60 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Init view
-        setContentView(R.layout.activity_main);
-        findViewById(R.id.pinSafeDialogButton).setOnClickListener(v -> {
-                    if (checkAndRequestForSmsPermissions())
-                        showChangePinSafeDialog();
-                });
-
-        // Init preferences store
+        initUIView();
         initPreferencesStore();
-
-        // Check for permissions
         checkAndRequestForSmsPermissions();
-
+        registerSmsBroadcastReceiver();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG, "Resumed activity");
-        resolveOldestPinSafeMessage();
+        PinSafePreference pinSafePreference = PreferenceHelper.retrieve();
+        if (pinSafePreference != null) {
+            resolveOldestPinSafeMessage(pinSafePreference);
+        } else {
+            Log.d(LOG_TAG, "There is no PINsafe preferences stored yet");
+        }
     }
 
 
     // --------------------------------------- Private
 
-    private void resolveOldestPinSafeMessage() {
-        PinSafePreference pinSafePreference = PreferenceHelper.retrieve();
-        if (pinSafePreference != null) {
-            Optional<PinSafeMessage> oldestPinSafeMessage = findOldestPinSafeMessage(pinSafePreference);
-            if (oldestPinSafeMessage.isPresent()) {
-                Log.d(LOG_TAG, "PINsafe SMS detected");
-                String newOtc = oldestPinSafeMessage.get().resolveOtc(pinSafePreference.getCode());
-                Log.d(LOG_TAG, "Decoded otc: " + newOtc);
-                renderNewOtc(newOtc);
-            }
-        }
-        else {
-            Log.d(LOG_TAG, "There is no PINsafe preferences stored yet");
+    private void registerSmsBroadcastReceiver() {
+        SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver(this::renderNewOtc);
+        IntentFilter smsFilter = new IntentFilter();
+        smsFilter.addAction(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
+        this.registerReceiver(smsBroadcastReceiver, smsFilter);
+    }
+
+    private void initUIView() {
+        setContentView(R.layout.activity_main);
+        findViewById(R.id.pinSafeDialogButton).setOnClickListener(v -> {
+            if (checkAndRequestForSmsPermissions())
+                showChangePinSafeDialog();
+        });
+    }
+
+    private void showChangePinSafeDialog() {
+        DialogFragment changePinDialog = new ChangePinDialog();
+        changePinDialog.show(getFragmentManager(), "dialog");
+    }
+
+    private void resolveOldestPinSafeMessage(PinSafePreference pinSafePreference) {
+        Optional<PinSafeMessage> oldestPinSafeMessage = findOldestPinSafeMessage(pinSafePreference);
+        if (oldestPinSafeMessage.isPresent()) {
+            Log.d(LOG_TAG, "PINsafe SMS detected");
+            String newOtc = oldestPinSafeMessage.get().resolveOtc(pinSafePreference.getCode());
+            Log.d(LOG_TAG, "Decoded otc: " + newOtc);
+            renderNewOtc(newOtc);
         }
     }
 
     private Optional<PinSafeMessage> findOldestPinSafeMessage(PinSafePreference pinSafePreference) {
-        Optional<PinSafeMessage> olderSms = smsHelper.findOlderSms(this,
+        return smsHelper.findOlderSms(this,
                 pinSafePreference.getSender(), PinSafeMessage::isPinSafeMessage);
-        return olderSms;
     }
 
     private void renderNewOtc(String newOtc) {
@@ -92,9 +102,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initPreferencesStore() {
         PreferenceHelper.init(this);
-        PreferenceHelper.register(() -> {
+        PreferenceHelper.register((pinSafePreference) -> {
             Log.d(LOG_TAG, "On preference change");
-            resolveOldestPinSafeMessage();
+            resolveOldestPinSafeMessage(pinSafePreference);
         });
     }
 
@@ -104,11 +114,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
-    }
-
-    void showChangePinSafeDialog() {
-        DialogFragment changePinDialog = new ChangePinDialog();
-        changePinDialog.show(getFragmentManager(), "dialog");
     }
 
 }
