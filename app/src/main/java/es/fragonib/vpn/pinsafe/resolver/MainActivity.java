@@ -60,19 +60,34 @@ public class MainActivity extends AppCompatActivity {
 
     // --------------------------------------- Private
 
-    private void registerSmsBroadcastReceiver() {
-        SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver(this::renderNewOtc);
-        IntentFilter smsFilter = new IntentFilter();
-        smsFilter.addAction(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
-        this.registerReceiver(smsBroadcastReceiver, smsFilter);
-    }
-
     private void initUIView() {
         setContentView(R.layout.activity_main);
         findViewById(R.id.pinSafeDialogButton).setOnClickListener(v -> {
             if (checkAndRequestForSmsPermissions())
                 showChangePinSafeDialog();
         });
+    }
+
+    private void initPreferencesStore() {
+        PreferenceHelper.init(this);
+        PreferenceHelper.register((pinSafePreference) -> {
+            Log.d(LOG_TAG, "On preference change");
+            resolveOldestPinSafeMessage(pinSafePreference);
+        });
+    }
+
+    private boolean checkAndRequestForSmsPermissions() {
+        if (!permissionHelper.hasReadSmsPermission(this)) {
+            permissionHelper.showRequestPermissionsInfoAlertDialog(this);
+            return false;
+        }
+        return true;
+    }
+
+    private void registerSmsBroadcastReceiver() {
+        SmsBroadcastReceiver smsBroadcastReceiver = new SmsBroadcastReceiver(this::renderNewOtc);
+        IntentFilter smsBroadcastFilter = new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
+        this.registerReceiver(smsBroadcastReceiver, smsBroadcastFilter);
     }
 
     private void showChangePinSafeDialog() {
@@ -98,22 +113,6 @@ public class MainActivity extends AppCompatActivity {
     private void renderNewOtc(String newOtc) {
         TextView otcText = findViewById(R.id.otcText);
         otcText.setText(newOtc);
-    }
-
-    private void initPreferencesStore() {
-        PreferenceHelper.init(this);
-        PreferenceHelper.register((pinSafePreference) -> {
-            Log.d(LOG_TAG, "On preference change");
-            resolveOldestPinSafeMessage(pinSafePreference);
-        });
-    }
-
-    private boolean checkAndRequestForSmsPermissions() {
-        if (!permissionHelper.hasReadSmsPermission(this)) {
-            permissionHelper.showRequestPermissionsInfoAlertDialog(this);
-            return false;
-        }
-        return true;
     }
 
 }
