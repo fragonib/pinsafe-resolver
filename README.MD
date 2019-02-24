@@ -1,6 +1,6 @@
 ![AppIcon](../master/app/src/main/res/mipmap-xxhdpi/ic_launcher.png) 
 
-# PinSAFE resolver
+# PINsafe resolver
 
 ![minSdkVersion](https://img.shields.io/badge/minSdkVersion-19-yellow.svg?style=true)
 ![compileSdkVersion](https://img.shields.io/badge/compileSdkVersion-25-green.svg?style=true)
